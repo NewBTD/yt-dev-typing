@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Floating Code Cards</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        height: 100vh;
+      }
+
+      .card {
+        position: absolute;
+        background-color: #f2f2f2;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: floatDown linear 50s;
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+      }
+
+      @keyframes floatDown {
+        0% {
+          transform: translateY(-100%);
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(80vh);
+          opacity: 1;
+        }
+      }
+
+      #message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        display: none;
+      }
+      #user_ans {
+        position: absolute;
+        bottom: 0;
+        left: 10%;
+        height: 100px;
+        width: 80%;
+        font-size: 2rem;
+      }
+      #score_board {
+        position: absolute;
+        right: 0;
+        font-size: 2rem;
+        margin-right: 2rem;
+        /* background-color: red; */
+        padding-top: 4px;
+        padding-left: 4rem;
+        padding-right: 4rem;
+      }
+      /* #start_menu{
+        z-index: 2;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: grey;
+    } */
+    </style>
+  </head>
+  <body>
+    <div id="start_menu">
+      <button id="startButton">Start</button>
+    </div>
+
+    <div id="score_board">
+      <h3 id="score">0</h3>
+      <div id="countdown">00:00</div>
+    </div>
+
+    <audio id="sound_correct" style="display: none">
+      <source src="correct-answer.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="sound_incorrect" style="display: none">
+      <source src="wrong-answer.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <audio id="sound_music" style="display: none">
+      <source src="music-for-game.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <div id="message">Time's Up</div>
+    <input type="text" id="user_ans" placeholder="type answer here" />
+    <script>
+      function playCorrect() {
+        sound_correct.cloneNode(true).play();
+      }
+      function playIncorrect() {
+        // sound_incorrect.play()
+        sound_incorrect.cloneNode(true).play();
+      }
+      function playMusic() {
+        sound_music.play();
+      }
+
+      let isStarted = false;
+      let isGameover = false;
+      let cardInterval;
+      let cardElements = [];
+      let codeArrayAns = [];
+
+      // Function to create a random card with code
+      function createRandomCard() {
+        if (isGameover) return;
+        // Fetch JSON data from code.json
+        fetch("code.json")
+          .then((response) => response.json())
+          .then((data) => {
+            const codeArray = data.javascript_code;
+            const randomIndex = Math.floor(Math.random() * codeArray.length);
+            const code = codeArray[randomIndex].code;
+
+            codeArrayAns.push(code);
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.innerText = code;
+            card.id = "ans_" + randomIndex;
+
+            document.body.appendChild(card);
+            cardElements.push(card);
+
+            // Set a random position
+            const screenWidth = window.innerWidth;
+            const randomX = Math.random() * (screenWidth - 200); // Adjust card width
+
+            card.style.left = randomX + "px";
+
+            // Remove the card when it reaches the bottom
+            card.addEventListener("animationend", () => {
+              document.body.removeChild(card);
+              cardElements.shift(); // Remove the first card from the array
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching JSON data:", error);
+          });
+      }
+      let inputElement = document.getElementById("user_ans");
+      inputElement.addEventListener("keydown", function (event) {
+        // Check if the pressed key is Enter (key code 13)
+        if (event.keyCode === 13) {
+          // Prevent the default behavior (form submission)
+          event.preventDefault();
+          let score_now = document.getElementById("score");
+          let answer = inputElement.value;
+          let isCorrect = checkAnswer(answer, cardElements);
+          inputElement.value = "";
+          if (isCorrect) {
+            score_now_int = parseInt(score_now.innerText);
+            score_now_int += 10;
+            score_now.innerText = score_now_int;
+          } else {
+            score_now_int = parseInt(score_now.innerText);
+            score_now_int -= 10;
+            score_now.innerText = score_now_int;
+          }
+        }
+      });
+
+      function checkAnswer(ans, cardElements) {
+        // console.log(cardElements[0].innerText)
+        // console.log(ans)
+        let elCorrect = cardElements.find((el) => el.innerText === ans);
+        if (elCorrect !== undefined) {
+          document.body.removeChild(elCorrect);
+          playCorrect();
+          return true;
+        } else {
+          playIncorrect();
+          return false;
+        }
+      }
+      // Start generating cards when the "Start" button is clicked
+      const countdownElement = document.getElementById("countdown");
+      let timeInSeconds = 5;
+      function updateCountdown() {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = timeInSeconds % 60;
+
+        // Display the countdown in the format MM:SS
+        countdownElement.textContent = `${String(minutes).padStart(
+          2,
+          "0"
+        )}:${String(seconds).padStart(2, "0")}`;
+
+        // Check if the countdown has reached zero
+        if (timeInSeconds === 0) {
+          clearInterval(interval); // Stop the countdown
+          gameplayState = "over";
+          openModal();
+          your_score_result.innerText = `Your Score: ${score_now_int}`;
+          //   countdownElement.textContent = "Countdown Complete!";
+        } else {
+          timeInSeconds--; // Decrement the time
+        }
+      }
+
+      // Call the updateCountdown function initially to display the starting time
+      updateCountdown();
+      const interval = setInterval(updateCountdown, 1000);
+
+      document.getElementById("startButton").addEventListener("click", () => {
+        if (!isStarted || isGameover) {
+          // Reset flags and hide the "Time's Up" message
+          isStarted = true;
+          playMusic();
+          isGameover = false;
+          document.getElementById("message").style.display = "none";
+          cardElements = []; // Clear the cardElements array
+
+          createRandomCard(); // Generate the first card immediately
+          cardInterval = setInterval(createRandomCard, 10000); // Generate subsequent cards every 10 seconds
+          isStarted = true;
+          setTimeout(() => {
+            isGameover = true;
+            clearInterval(cardInterval); // Stop card generation
+            document.getElementById("message").style.display = "block";
+
+            // Remove all existing cards
+            cardElements.forEach((card) => {
+              console.log(card);
+              document.body.removeChild(card);
+            });
+          }, 60000); // Stop the game after 60 seconds
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DevTyping</title>
+  </head>
+  <style>
+    body {
+      height: 100vh;
+    }
+    /* #typing_zone{
+        position: relative;
+    } */
+    #user_ans {
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+      height: 100px;
+      width: 80%;
+    }
+    /* #score {
+      position: absolute;
+      right: 0;
+      font-size: 3rem;
+      color: red;
+      margin-right: 2rem;
+    } */
+    #score_board {
+      position: absolute;
+      right: 0;
+      font-size: 2rem;
+      margin-right: 2rem;
+      /* background-color: red; */
+      padding-top: 4px;
+      padding-left: 4rem;
+      padding-right: 4rem;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 60%;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .close {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 20px;
+    }
+
+    /* Style the button inside the modal */
+    #closeModalInsideBtn {
+      padding: 10px 20px;
+      background-color: #ccc;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Hover effect for buttons */
+    button:hover {
+      background-color: #555;
+      color: #fff;
+    }
+  </style>
+  <body>
+    <div id="score_board">
+      <h3 id="score">0</h3>
+      <div id="countdown"></div>
+    </div>
+    <input type="text" id="user_ans" placeholder="type answer here" />
+
+    <div id="modal" class="modal" style="display: none">
+      <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
+        <h2>Gameover!</h2>
+        <p id="score_end_result">Your score:</p>
+        <button id="closeModalInsideBtn">Play Again</button>
+      </div>
+    </div>
+  </body>
+  <script>
+    let gameplayState = "start";
+    let score_now_int = 0;
+    let inputElement = document.getElementById("user_ans");
+    let your_score_result = document.getElementById("score_end_result");
+    if (gameplayState === "start") {
+      // Get a reference to the countdown display element
+      const countdownElement = document.getElementById("countdown");
+
+      // Set the initial time to 60 seconds
+      let timeInSeconds = 5;
+
+      // Function to update the countdown display
+      function updateCountdown() {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = timeInSeconds % 60;
+
+        // Display the countdown in the format MM:SS
+        countdownElement.textContent = `${String(minutes).padStart(
+          2,
+          "0"
+        )}:${String(seconds).padStart(2, "0")}`;
+
+        // Check if the countdown has reached zero
+        if (timeInSeconds === 0) {
+          clearInterval(interval); // Stop the countdown
+          gameplayState = "over";
+          openModal();
+          your_score_result.innerText = `Your Score: ${score_now_int}`;
+          //   countdownElement.textContent = "Countdown Complete!";
+        } else {
+          timeInSeconds--; // Decrement the time
+        }
+      }
+
+      // Call the updateCountdown function initially to display the starting time
+      updateCountdown();
+
+      // Update the countdown every second (1000 milliseconds)
+      const interval = setInterval(updateCountdown, 1000);
+    }
+    inputElement.addEventListener("keydown", function (event) {
+      // Check if the pressed key is Enter (key code 13)
+      if (event.keyCode === 13) {
+        // Prevent the default behavior (form submission)
+        event.preventDefault();
+        let score_now = document.getElementById("score");
+        let answer = inputElement.value;
+        let isCorrect = checkAnswer(answer);
+        inputElement.value = "";
+        if (isCorrect) {
+          score_now_int = parseInt(score_now.innerText);
+          score_now_int += 10;
+          score_now.innerText = score_now_int;
+        } else {
+          score_now_int = parseInt(score_now.innerText);
+          score_now_int -= 10;
+          score_now.innerText = score_now_int;
+        }
+      }
+    });
+
+    function checkAnswer(ans) {
+      let ans_arr = ["test"];
+      if (ans_arr.includes(ans)) {
+        return true;
+      }
+    }
+
+    // Get references to the modal and buttons
+    const modal = document.getElementById("modal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const closeModalInsideBtn = document.getElementById("closeModalInsideBtn");
+
+    // Function to open the modal
+    function openModal() {
+      modal.style.display = "block";
+    }
+    // Function to close the modal
+    function closeModal() {
+      modal.style.display = "none";
+    }
+
+    // Event listeners for opening and closing the modal
+    closeModalBtn.addEventListener("click", closeModal);
+    closeModalInsideBtn.addEventListener("click", closeModal);
+
+    // Close modal when clicking outside the modal content
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Close modal when pressing the Esc key
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+  </script>
+  <script src="modal.js"></script>
+</html>

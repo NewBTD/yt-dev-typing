@@ -1,0 +1,120 @@
+{
+  "javascript_code": [
+    {
+      "title": "c",
+      "code": "const num = prompt('Enter a positive number: ');"
+    },
+    {
+      "title" : "c",
+      "code": "let flag = true;"
+    },
+    {
+      "title" : "c",
+      "code": "for(let i = 2; i <= num / 2; i++)"
+    },
+    {
+      "title" : "c",
+      "code": "const num = prompt('Enter a positive number: ');"
+    },
+    {
+      "title" : "c",
+      "code": "let removedElement = prime_numbers.splice(4, 1, 13);"
+    },
+    {
+      "title" : "c",
+      "code": "console.log(`The factors of ${num} is:`);"
+    },
+    {
+      "title" : "c",
+      "code": "function guessNumber()"
+    },
+    {
+      "title" : "c",
+      "code": "const random = Math.floor(Math.random() * 10) + 1;"
+    },
+    {
+      "title" : "c",
+      "code": "const formatter = new Intl.NumberFormat('en-US', {});"
+    },
+    {
+      "title" : "c",
+      "code": "function performIntersection(arr1, arr2)"
+    },
+    {
+      "title" : "c",
+      "code": "let intersectionResult = [];"
+    },
+    {
+      "title" : "c",
+      "code": "return intersectionResult;"
+    },
+    {
+      "title" : "c",
+      "code": "const intersectionResult = arr1.filter(x => arr2.indexOf(x) !== -1);"
+    },
+    {
+      "title" : "c",
+      "code": "value = student[key];"
+    },
+    {
+      "title" : "c",
+      "code": "const result = Math.sqrt(number);"
+    },
+    {
+      "title" : "c",
+      "code": "if (doucment.getElementById('myCheck').checked)"
+    },
+    {
+      "title" : "c",
+      "code": "else if (document.getElementById('gender').value == 'girl')"
+    },
+    {
+      "title" : "c",
+      "code": "for (const element of array1)"
+    },
+    {
+      "title" : "c",
+      "code": "currentNode = iterator.nextNode()"
+    },
+    {
+      "title" : "c",
+      "code": "let currentNode = iterator.nextNode();"
+    },
+    {
+      "title" : "c",
+      "code": "const iterator = document.createNodeIterator(document, NodeFilter.SHOW_COMMENT);"
+    },
+    {
+      "title" : "c",
+      "code": "while (currentNode = iterator.nextNode())"
+    },
+    {
+      "title" : "c",
+      "code": "const identity = (x) => { return x; };"
+    },
+    {
+      "title" : "c",
+      "code": "for (var i = 0; i < a.length; i++)"
+    },
+    {
+      "title" : "c",
+      "code": "constructor(name, age, grade)"
+    },
+    {
+      "title" : "c",
+      "code": "class Student extends Person {"
+    },
+    {
+      "title" : "c",
+      "code": "const number = parseInt(prompt('Enter a positive integer: '));"
+    },
+    {
+      "title" : "c",
+      "code": "const s = (side1 + side2 + side3) / 2;"
+    },
+    {
+      "title" : "c",
+      "code": "const areaValue = (baseValue * heightValue) / 2;"
+    }
+  ]
+}
